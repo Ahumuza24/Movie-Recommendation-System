@@ -56,6 +56,7 @@ def get_suggestions():
     return list(data['movie_title'].str.capitalize())
 
 app = Flask(__name__)
+app.secret_key = 'fe404de033d51139d9922b0e84de6aa3'
 
 @app.route("/")
 @app.route("/home")
