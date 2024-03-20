@@ -10,19 +10,24 @@ import pickle
 import requests
 import os
 
-# load the nlp model and tfidf vectorizer from disk
+# Load the NLP model and tfidf vectorizer from disk
 filename = 'nlp_model.pkl'
 clf = pickle.load(open(filename, 'rb'))
-vectorizer = pickle.load(open('tranform.pkl','rb'))
+vectorizer = pickle.load(open('tranform.pkl', 'rb'))
+
+# Define file paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+MAIN_DATA_FILE = os.path.join(DATA_DIR, 'main_data.csv')
 
 def create_similarity():
-    data = pd.read_csv('main_data.csv')
-    # creating a count matrix
+    data = pd.read_csv(MAIN_DATA_FILE)
+    # Creating a count matrix
     cv = CountVectorizer()
     count_matrix = cv.fit_transform(data['comb'])
-    # creating a similarity score matrix
+    # Creating a similarity score matrix
     similarity = cosine_similarity(count_matrix)
-    return data,similarity
+    return data, similarity
 
 def rcmd(m):
     m = m.lower()
@@ -34,50 +39,50 @@ def rcmd(m):
     if m not in data['movie_title'].unique():
         return('Sorry! The movie you requested is not in our database. Please check the spelling or try with some other movies')
     else:
-        i = data.loc[data['movie_title']==m].index[0]
+        i = data.loc[data['movie_title'] == m].index[0]
         lst = list(enumerate(similarity[i]))
-        lst = sorted(lst, key = lambda x:x[1] ,reverse=True)
-        lst = lst[1:11] # excluding first item since it is the requested movie itself
+        lst = sorted(lst, key=lambda x: x[1], reverse=True)
+        lst = lst[1:11]  # Excluding first item since it is the requested movie itself
         l = []
         for i in range(len(lst)):
             a = lst[i][0]
             l.append(data['movie_title'][a])
         return l
-    
-# converting list of string to list (eg. "["abc","def"]" to ["abc","def"])
+
+# Converting list of string to list (e.g., "["abc","def"]" to ["abc","def"])
 def convert_to_list(my_list):
     my_list = my_list.split('","')
-    my_list[0] = my_list[0].replace('["','')
-    my_list[-1] = my_list[-1].replace('"]','')
+    my_list[0] = my_list[0].replace('["', '')
+    my_list[-1] = my_list[-1].replace('"]', '')
     return my_list
 
-#read csv file
+# Read CSV file
 def get_suggestions():
-    data = pd.read_csv('main_data.csv')
+    data = pd.read_csv(MAIN_DATA_FILE)
     return list(data['movie_title'].str.capitalize())
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 
 
 @app.route("/")
 @app.route("/home")
 def home():
     suggestions = get_suggestions()
-    return render_template('home.html',suggestions=suggestions)
+    return render_template('home.html', suggestions=suggestions)
 
-@app.route("/similarity",methods=["POST"])
+@app.route("/similarity", methods=["POST"])
 def similarity():
     movie = request.form['name']
     rc = rcmd(movie)
-    if type(rc)==type('string'):
+    if type(rc) == type('string'):
         return rc
     else:
-        m_str="---".join(rc)
+        m_str = "---".join(rc)
         return m_str
 
-@app.route("/recommend",methods=["POST"])
+@app.route("/recommend", methods=["POST"])
 def recommend():
-    # getting data from AJAX request
+    # Getting data from AJAX request
     title = request.form['title']
     cast_ids = request.form['cast_ids']
     cast_names = request.form['cast_names']
@@ -98,10 +103,10 @@ def recommend():
     rec_movies = request.form['rec_movies']
     rec_posters = request.form['rec_posters']
 
-    # get movie suggestions for auto complete
+    # Get movie suggestions for auto complete
     suggestions = get_suggestions()
 
-    # call the convert_to_list function for every string that needs to be converted to list
+    # Call the convert_to_list function for every string that needs to be converted to list
     rec_movies = convert_to_list(rec_movies)
     rec_posters = convert_to_list(rec_posters)
     cast_names = convert_to_list(cast_names)
@@ -110,13 +115,13 @@ def recommend():
     cast_bdays = convert_to_list(cast_bdays)
     cast_bios = convert_to_list(cast_bios)
     cast_places = convert_to_list(cast_places)
-    
-    # convert string to list (eg. "[1,2,3]" to [1,2,3])
+
+    # Convert string to list (e.g., "[1,2,3]" to [1,2,3])
     cast_ids = cast_ids.split(',')
-    cast_ids[0] = cast_ids[0].replace("[","")
-    cast_ids[-1] = cast_ids[-1].replace("]","")
-    
-    # rendering the string to python string
+    cast_ids[0] = cast_ids[0].replace("[", "")
+    cast_ids[-1] = cast_ids[-1].replace("]", "")
+
+    # Rendering the string to Python string
     for i in range(len(cast_bios)):
         cast_bios[i] = cast_bios[i].replace(r'\n', '\n').replace(r'\"','\"')
     
