@@ -8,6 +8,7 @@ import bs4 as bs
 import urllib.request
 import pickle
 import requests
+import os
 
 # load the nlp model and tfidf vectorizer from disk
 filename = 'nlp_model.pkl'
@@ -56,7 +57,7 @@ def get_suggestions():
     return list(data['movie_title'].str.capitalize())
 
 app = Flask(__name__)
-app.secret_key = 'fe404de033d51139d9922b0e84de6aa3'
+
 
 @app.route("/")
 @app.route("/home")
