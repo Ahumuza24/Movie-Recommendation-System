@@ -41,12 +41,12 @@ function load_details(my_api_key,title){
       if(movie.results.length<1){
         $('.fail').css('display','block');
         $('.results').css('display','none');
-        $("#loader").delay(500).fadeOut();
+        $("#loader").delay(200).fadeOut();
       }
       else{
         $("#loader").fadeIn();
         $('.fail').css('display','none');
-        $('.results').delay(1000).css('display','block');
+        $('.results').delay(500).css('display','block');
         var movie_id = movie.results[0].id;
         var movie_title = movie.results[0].original_title;
         movie_recs(movie_title,movie_id,my_api_key);
@@ -54,7 +54,7 @@ function load_details(my_api_key,title){
     },
     error: function(){
       alert('Invalid Request');
-      $("#loader").delay(500).fadeOut();
+      $("#loader").delay(200).fadeOut();
     },
   });
 }
@@ -69,7 +69,7 @@ function movie_recs(movie_title,movie_id,my_api_key){
       if(recs=="Sorry! The movie you requested is not in our database. Please check the spelling or try with some other movies"){
         $('.fail').css('display','block');
         $('.results').css('display','none');
-        $("#loader").delay(500).fadeOut();
+        $("#loader").delay(200).fadeOut();
       }
       else {
         $('.fail').css('display','none');
@@ -83,8 +83,8 @@ function movie_recs(movie_title,movie_id,my_api_key){
       }
     },
     error: function(){
-      alert("error recs");
-      $("#loader").delay(500).fadeOut();
+      alert("Request Failed");
+      $("#loader").delay(200).fadeOut();
     },
   }); 
 }
@@ -99,7 +99,7 @@ function get_movie_details(movie_id,my_api_key,arr,movie_title) {
     },
     error: function(){
       alert("API Error!");
-      $("#loader").delay(500).fadeOut();
+      $("#loader").delay(200).fadeOut();
     },
   });
 }
@@ -160,7 +160,7 @@ function show_details(movie_details,arr,movie_title,my_api_key,movie_id){
     url:"/recommend",
     dataType: 'html',
     complete: function(){
-      $("#loader").delay(500).fadeOut();
+      $("#loader").delay(200).fadeOut();
     },
     success: function(response) {
       $('.results').html(response);
@@ -218,7 +218,7 @@ function get_movie_cast(movie_id,my_api_key){
       },
       error: function(){
         alert("Invalid Request!");
-        $("#loader").delay(500).fadeOut();
+        $("#loader").delay(200).fadeOut();
       }
     });
 
@@ -238,7 +238,7 @@ function get_movie_posters(arr,my_api_key){
       },
       error: function(){
         alert("Invalid Request!");
-        $("#loader").delay(500).fadeOut();
+        $("#loader").delay(200).fadeOut();
       },
     })
   }
