@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/63693f2b-e5f1-4af0-b534-69e190091fd8/resourceGroups/Movie-Prediction-App/providers/Microsoft.Web/sites/movierecommendationapp",
+    "appService.deploySubpath": "."
+}
